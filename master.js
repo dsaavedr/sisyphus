@@ -1,6 +1,11 @@
-let WIDTH, HEIGHT;
+let WIDTH,
+    HEIGHT,
+    c = 20;
 
-const canvas = document.getElementById("canvas"),
+const BG_COLOR = "black",
+    LINE_COLOR = "white",
+    RES = 200,
+    canvas = document.getElementById("canvas"),
     ctx = canvas.getContext("2d");
 
 const requestAnimationFrame =
@@ -16,9 +21,11 @@ function init() {
     canvas.setAttribute("width", WIDTH);
     canvas.setAttribute("height", HEIGHT);
 
+    ctx.fillStyle = BG_COLOR;
+    ctx.strokeStyle = LINE_COLOR;
+
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     ctx.beginPath();
-    ctx.fillStyle = "black";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
     ctx.closePath();
 
@@ -26,7 +33,26 @@ function init() {
 }
 
 function ani() {
-    //requestAnimationFrame(ani);
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    const step = WIDTH / RES;
+    // Draw the line
+    ctx.beginPath();
+    // Set initial points for line start
+    let canvasX = 0;
+    let translatedX = (((c % RES) * step) / WIDTH) * Math.PI * 2;
+    let y = Math.sin(translatedX);
+    ctx.moveTo(0, scale(y, -1, 1, HEIGHT, 0));
+    ctx.lineTo(scale(canvasX, 0, Math.PI * 2, 0, WIDTH), scale(y, -1, 1, HEIGHT, 0));
+    for (let i = 1; i < RES; i++) {
+        canvasX = ((i * step) / WIDTH) * Math.PI * 2;
+        translatedX = ((((i + c) % RES) * step) / WIDTH) * Math.PI * 2;
+        y = Math.sin(translatedX);
+        ctx.lineTo(scale(canvasX, 0, Math.PI * 2, 0, WIDTH), scale(y, -1, 1, HEIGHT, 0));
+    }
+    ctx.stroke();
+    ctx.closePath();
+    c++;
+    requestAnimationFrame(ani);
 }
 
 init();
